@@ -1,0 +1,78 @@
+import time
+import random
+
+# Function A
+def get_first(data):        # O(1) Constant time: No matter how much the function scales, the code is doing one operation.
+    return data[0]
+
+# Function B
+def count_matches(data, target):        # O(n) Linear time: The function only loops through the list once.
+    count = 0
+    for item in data:
+        if item == target:
+            count += 1
+    return count
+
+# Function C
+def all_pairs(data):        # O(n²) Quadratic time: The nested loops multiply together to quadruple the amoout of times the function runs.
+    pairs = []
+    for i in range(len(data)):
+        for j in range(len(data)):
+            pairs.append((data[i], data[j]))
+    return pairs
+
+# Function D
+def mystery(n):         # O(log n) Logarithmic time: Every iteration reduces the data size, making the function run faster.
+    count = 0
+    while n > 1:
+        n = n // 2
+        count += 1
+    return count
+
+# Function E
+def process(data):              # O(n log n) Log linear time: Use the complexity that takes the longest (The sort funtion)
+    total = sum(data)           # Line 1
+    sorted_data = sorted(data)  # Line 2
+    first = data[0]             # Line 3
+    return total, sorted_data, first
+
+
+def number_sum_slow(data, target):
+    # Count how many pairs of numbers sum to a given target using the slow nested method. O(n²) complexity
+    counter = 0
+    for first_number in range(len(data)):
+        for second_number in range(first_number + 1, len(data)):
+            if data[first_number] + data[second_number] == target:
+                counter += 1
+    return counter
+
+def number_sum_fast(data, target):
+    # Count how many pairs of numbers sum to a given target using the fast linear method. O(n) complexity
+    counter = 0
+    seen = set()
+    for i in data:
+        needed = target - i
+        if needed in seen:
+            counter += 1
+        elif needed not in seen:
+            seen.add(i)
+    return counter
+
+def benchmark(func, data, target):
+    """Time how long the functions take"""
+    start = time.time()
+    result = func(data, 957)
+    end = time.time()
+    return end - start
+
+# Generate the test data with no duplicates
+sizes = [1000, 5000, 10000]
+
+for size in sizes:
+    data = list(range(size))
+    random.shuffle(data)
+
+    slow = benchmark(number_sum_slow, data, 10)
+    fast = benchmark(number_sum_fast, data, 10)
+
+    print(f"n={size:>6}   Slow/Nested: {slow:.4f}s   |   Fast O(n): {fast:.4f}s")
